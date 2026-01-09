@@ -1,0 +1,216 @@
+[INFO] Scanning for projects...
+[INFO]
+[INFO] ---------------------< lk.ntmi:support-portal-api >---------------------
+[INFO] Building support-portal-api 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- resources:3.3.1:resources (default-resources) @ support-portal-api ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO]
+[INFO] --- compiler:3.14.1:compile (default-compile) @ support-portal-api ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO]
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ support-portal-api ---
+[INFO] skip non existing resourceDirectory /app/support-portal-api/src/test/resources
+[INFO]
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ support-portal-api ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO]
+[INFO] --- surefire:3.5.4:test (default-test) @ support-portal-api ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO]
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running lk.ntmi.support_portal_api.SupportPortalApiApplicationTests
+04:00:23.497 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [lk.ntmi.support_portal_api.SupportPortalApiApplicationTests]: SupportPortalApiApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+04:00:23.685 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration lk.ntmi.support_portal_api.SupportPortalApiApplication for test class lk.ntmi.support_portal_api.SupportPortalApiApplicationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.1)
+
+2026-01-09T04:00:24.520Z  INFO 3912 --- [           main] l.n.s.SupportPortalApiApplicationTests   : Starting SupportPortalApiApplicationTests using Java 21.0.8 with PID 3912 (started by jules in /app/support-portal-api)
+2026-01-09T04:00:24.522Z  INFO 3912 --- [           main] l.n.s.SupportPortalApiApplicationTests   : No active profile set, falling back to 1 default profile: "default"
+2026-01-09T04:00:26.346Z  INFO 3912 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-09T04:00:26.499Z  INFO 3912 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 128 ms. Found 6 JPA repository interfaces.
+2026-01-09T04:00:27.458Z  INFO 3912 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-01-09T04:00:27.524Z  INFO 3912 --- [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.0.Final
+2026-01-09T04:00:28.060Z  INFO 3912 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-09T04:00:28.096Z  INFO 3912 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-09T04:00:28.454Z  INFO 3912 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2026-01-09T04:00:28.456Z  INFO 3912 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-09T04:00:28.503Z  WARN 3912 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-09T04:00:28.535Z  INFO 3912 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:testdb]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: TESTDB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-01-09T04:00:30.118Z  INFO 3912 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate:
+    create table branches (
+        id integer generated by default as identity,
+        name varchar(255) not null,
+        primary key (id)
+    )
+Hibernate:
+    create table categories (
+        id integer generated by default as identity,
+        name varchar(255) not null,
+        primary key (id)
+    )
+Hibernate:
+    create table error_types (
+        id integer generated by default as identity,
+        name varchar(255) not null,
+        category_id integer not null,
+        primary key (id)
+    )
+Hibernate:
+    create table notifications (
+        id bigint generated by default as identity,
+        branch_name varchar(255),
+        created_at timestamp(6),
+        error_category varchar(255),
+        error_type varchar(255),
+        is_read boolean not null,
+        message varchar(255),
+        related_ticket_id bigint,
+        ticket_number varchar(255),
+        trigger_user varchar(255),
+        type varchar(255),
+        user_id integer,
+        primary key (id)
+    )
+Hibernate:
+    create table ticket_images (
+        ticket_id bigint not null,
+        image_path varchar(255)
+    )
+Hibernate:
+    create table tickets (
+        id bigint generated by default as identity,
+        branch_id integer,
+        created_at timestamp(6),
+        description varchar(1000) not null,
+        error_type_id integer,
+        priority enum ('CRITICAL','HIGH','LOW','MEDIUM'),
+        status enum ('CLOSED','IN_PROGRESS','OPEN','RESOLVED'),
+        ticket_number varchar(255) not null,
+        updated_at timestamp(6),
+        assigned_admin_id integer,
+        created_by_user_id integer not null,
+        primary key (id)
+    )
+Hibernate:
+    create table users (
+        id integer generated by default as identity,
+        created_at timestamp(6),
+        email varchar(100),
+        full_name varchar(100),
+        is_active boolean,
+        password varchar(255) not null,
+        role enum ('ADMIN','BRANCH_USER','USER'),
+        updated_at timestamp(6),
+        username varchar(50) not null,
+        branch_id integer,
+        primary key (id)
+    )
+Hibernate:
+    alter table if exists branches
+       drop constraint if exists UKhw68nd07qk3jrjfg70qxq9vb7
+Hibernate:
+    alter table if exists branches
+       add constraint UKhw68nd07qk3jrjfg70qxq9vb7 unique (name)
+Hibernate:
+    alter table if exists categories
+       drop constraint if exists UKt8o6pivur7nn124jehx7cygw5
+Hibernate:
+    alter table if exists categories
+       add constraint UKt8o6pivur7nn124jehx7cygw5 unique (name)
+Hibernate:
+    alter table if exists tickets
+       drop constraint if exists UK4ks48wgrew48dpkh0wd1rbe2b
+Hibernate:
+    alter table if exists tickets
+       add constraint UK4ks48wgrew48dpkh0wd1rbe2b unique (ticket_number)
+Hibernate:
+    alter table if exists users
+       drop constraint if exists UKr43af9ap4edm43mmtq01oddj6
+Hibernate:
+    alter table if exists users
+       add constraint UKr43af9ap4edm43mmtq01oddj6 unique (username)
+Hibernate:
+    alter table if exists error_types
+       add constraint FK9ydw3odgoocbj062j9hadrt17
+       foreign key (category_id)
+       references categories
+Hibernate:
+    alter table if exists notifications
+       add constraint FK9y21adhxn0ayjhfocscqox7bh
+       foreign key (user_id)
+       references users
+Hibernate:
+    alter table if exists ticket_images
+       add constraint FKljdxwxk8yrdbnm6v2sjg6ayeh
+       foreign key (ticket_id)
+       references tickets
+Hibernate:
+    alter table if exists tickets
+       add constraint FK4um0g3osslyegxhgywvn2xaxr
+       foreign key (assigned_admin_id)
+       references users
+Hibernate:
+    alter table if exists tickets
+       add constraint FKsyw3dpwxmlgelm9o6uxsnpfpo
+       foreign key (created_by_user_id)
+       references users
+Hibernate:
+    alter table if exists users
+       add constraint FK9o70sp9ku40077y38fk4wieyk
+       foreign key (branch_id)
+       references branches
+2026-01-09T04:00:30.245Z  INFO 3912 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-09T04:00:30.394Z  INFO 3912 --- [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-01-09T04:00:30.748Z  INFO 3912 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userDetailsServiceImpl
+2026-01-09T04:00:31.184Z  WARN 3912 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-09T04:00:32.581Z  INFO 3912 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-01-09T04:00:32.672Z  INFO 3912 --- [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Starting...
+2026-01-09T04:00:32.673Z  INFO 3912 --- [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@234ad505]]
+2026-01-09T04:00:32.674Z  INFO 3912 --- [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Started.
+2026-01-09T04:00:32.685Z  INFO 3912 --- [           main] l.n.s.SupportPortalApiApplicationTests   : Started SupportPortalApiApplicationTests in 8.682 seconds (process running for 10.679)
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (/home/jules/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.8/byte-buddy-agent-1.17.8.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+2026-01-09T04:00:33.550Z  INFO 3912 --- [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Stopping...
+2026-01-09T04:00:33.550Z  INFO 3912 --- [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@234ad505]]
+2026-01-09T04:00:33.551Z  INFO 3912 --- [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Stopped.
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.44 s -- in lk.ntmi.support_portal_api.SupportPortalApiApplicationTests
+[INFO]
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  13.324 s
+[INFO] Finished at: 2026-01-09T04:00:33Z
+[INFO] ------------------------------------------------------------------------
