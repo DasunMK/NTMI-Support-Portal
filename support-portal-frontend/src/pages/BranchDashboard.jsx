@@ -1,198 +1,182 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
-  Grid, Paper, Typography, Button, Chip, Box, Container, IconButton, TextField, 
-  ToggleButton, ToggleButtonGroup, Dialog, DialogTitle, DialogContent, DialogActions, 
-  MenuItem, Divider, Snackbar, Alert 
+  Container, Card, CardContent, Typography, Chip, Box, 
+  Button, Divider, Dialog, DialogTitle, DialogContent, 
+  DialogActions, IconButton, Paper 
 } from '@mui/material';
-import PrintIcon from '@mui/icons-material/Print';
-import SearchIcon from '@mui/icons-material/Search';
-import SummarizeIcon from '@mui/icons-material/Summarize';
-import AddCircleIcon from '@mui/icons-material/AddCircle'; 
+// FIX: Use standard path, but we will use the new 'size' props
+import Grid from '@mui/material/Grid'; 
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import HistoryIcon from '@mui/icons-material/History';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CloseIcon from '@mui/icons-material/Close';
-import LogoutIcon from '@mui/icons-material/Logout';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable'; 
-import AuthService from '../services/auth.service';
-import TicketService from '../services/ticket.service';
 import { useNavigate } from 'react-router-dom';
+import TicketService from '../services/ticket.service';
+import AuthService from '../services/auth.service';
 
 export default function BranchDashboard() {
-  const navigate = useNavigate();
-  const currentUser = AuthService.getCurrentUser();
-
   const [tickets, setTickets] = useState([]);
-  const [viewMode, setViewMode] = useState('today'); 
-  const [searchTerm, setSearchTerm] = useState('');
-  
-  const [openCreate, setOpenCreate] = useState(false); 
-  const [selectedTicket, setSelectedTicket] = useState(null); 
-  const [toast, setToast] = useState({ open: false, message: '', severity: 'success' });
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const user = AuthService.getCurrentUser();
+  const navigate = useNavigate();
 
-  // Form State
-  const [newTicket, setNewTicket] = useState({
-    branchName: currentUser?.username || 'Branch', // Default to username if branch not set
-    errorCategory: '',
-    errorType: '',
-    description: ''
-  });
-
-  // HARDCODED SETTINGS (Since we haven't built Settings API yet)
-  const settings = {
-    branches: ["Head Office", "Gampaha", "Kandy", "Galle", "Kurunegala"],
-    errorCategories: ["Hardware", "Software", "Network", "Printer"],
-    errorTypes: [
-        { name: "PC Not Turning On", category: "Hardware" },
-        { name: "Monitor Flickering", category: "Hardware" },
-        { name: "Cannot Login", category: "Software" },
-        { name: "Internet Slow", category: "Network" },
-        { name: "Paper Jam", category: "Printer" }
-    ]
-  };
-
-  const loadData = async () => {
-    try {
-      const response = await TicketService.getAllTickets();
-      // Filter for this user only
-      // Note: In a real app, the backend should filter this, but we do it here for now
-      setTickets(response.data);
-    } catch (error) {
-      console.error("Error loading tickets", error);
-    }
-  };
-
-  useEffect(() => { 
-    if(!currentUser) navigate("/login");
-    loadData();
-  }, []);
-
-  const handleLogout = () => {
-    AuthService.logout();
-    navigate("/login");
-  };
-
-  const getFilteredTickets = () => {
-    // Basic filtering logic
-    return tickets.filter(t => {
-        if (viewMode === 'today') {
-            return t.status !== 'COMPLETED'; // Simplified logic
+  // --- LOAD DATA ---
+  useEffect(() => {
+    const fetchTickets = async () => {
+        try {
+            const res = await TicketService.getAllTickets();
+            const myTickets = res.data.filter(t => t.createdBy?.username === user.username);
+            setTickets(myTickets.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)));
+        } catch (error) {
+            console.error("Error loading tickets", error);
         }
-        return true;
-    });
+    };
+    fetchTickets();
+    const interval = setInterval(fetchTickets, 5000);
+    return () => clearInterval(interval);
+  }, [user.username]);
+
+  // --- STATS ---
+  const stats = {
+      total: tickets.length,
+      pending: tickets.filter(t => t.status === 'OPEN').length,
+      active: tickets.filter(t => t.status === 'IN_PROGRESS').length,
+      resolved: tickets.filter(t => t.status === 'RESOLVED').length
   };
 
-  const displayedTickets = getFilteredTickets();
-  const filteredTypes = settings.errorTypes.filter(t => t.category === newTicket.errorCategory);
-
-  const handleSubmit = async () => {
-    try {
-      // Use the Service
-      await TicketService.createTicket({
-        description: newTicket.description,
-        priority: "MEDIUM", // Default
-        // We map your fields to what the Java Backend expects:
-        // You might need to add 'category' to your Java Entity if you want to save it
-      });
-
-      setOpenCreate(false); 
-      setNewTicket({ branchName: currentUser.username, errorCategory: '', errorType: '', description: '' }); 
-      loadData(); 
-      setToast({ open: true, message: 'Ticket Sent Successfully!', severity: 'success' });
-    } catch (error) {
-        setToast({ open: true, message: 'Failed to send ticket', severity: 'error' });
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'OPEN': return 'error';       
+      case 'IN_PROGRESS': return 'warning'; 
+      case 'RESOLVED': return 'success';   
+      default: return 'default';
     }
   };
 
-  const downloadJobCard = (e, ticket) => {
-    e.stopPropagation(); 
-    const doc = new jsPDF();
-    doc.text(`Job Card - ${ticket.id}`, 10, 20);
-    doc.text(`Description: ${ticket.description}`, 10, 30);
-    doc.save(`JobCard_${ticket.id}.pdf`);
-  };
+  const StatCard = ({ title, count, color }) => (
+    <Card elevation={0} sx={{ height: '100%', border: '1px solid #eee', borderRadius: 3, bgcolor: `${color}08` }}>
+        <CardContent sx={{ textAlign: 'center', p: 2 }}>
+            <Typography variant="h4" fontWeight="bold" sx={{ color: color, mb: 0.5 }}>{count}</Typography>
+            <Typography variant="body2" color="textSecondary" fontWeight="600">{title}</Typography>
+        </CardContent>
+    </Card>
+  );
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Snackbar open={toast.open} autoHideDuration={6000} onClose={() => setToast({...toast, open: false})}>
-        <Alert severity={toast.severity} sx={{ width: '100%' }}>{toast.message}</Alert>
-      </Snackbar>
-
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+      
       {/* HEADER */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <div>
-            <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
-                {currentUser?.username} Dashboard
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-                Manage your branch support requests.
-            </Typography>
-        </div>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
         <Box>
-            <Button variant="contained" size="large" startIcon={<AddCircleIcon />} onClick={() => setOpenCreate(true)} sx={{ mr: 2 }}>
-                Raise New Ticket
-            </Button>
-            <Button variant="outlined" color="error" startIcon={<LogoutIcon />} onClick={handleLogout}>
-                Logout
-            </Button>
+            <Typography variant="h4" fontWeight="800" color="primary" gutterBottom>
+                Branch Portal
+            </Typography>
+            <Box display="flex" alignItems="center" gap={1} color="text.secondary">
+                <LocationOnIcon fontSize="small" />
+                <Typography variant="body1">{user.username}</Typography>
+            </Box>
         </Box>
+        <Button 
+            variant="contained" 
+            size="large" 
+            startIcon={<AddCircleIcon />} 
+            onClick={() => navigate('/create-ticket')}
+            sx={{ borderRadius: 3, px: 3, py: 1.5, textTransform: 'none', fontSize: '1rem' }}
+        >
+            Raise New Ticket
+        </Button>
       </Box>
 
-      {/* FILTERS */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-            <ToggleButtonGroup color="primary" value={viewMode} exclusive onChange={(e, newView) => { if(newView) setViewMode(newView); }}>
-              <ToggleButton value="today">Active</ToggleButton>
-              <ToggleButton value="history">History</ToggleButton>
-            </ToggleButtonGroup>
-             <TextField size="small" placeholder="Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} InputProps={{ startAdornment: <SearchIcon color="action" sx={{ mr: 1 }} /> }}/>
-        </Box>
-      </Paper>
+      {/* STATS SECTION */}
+      {/* FIX: Using 'container' and 'size' prop correctly for MUI v6 */}
+      <Grid container spacing={2} mb={4}>
+        <Grid size={{ xs: 6, md: 3 }}>
+            <StatCard title="Total Raised" count={stats.total} color="#1976d2" />
+        </Grid>
+        <Grid size={{ xs: 6, md: 3 }}>
+            <StatCard title="Pending" count={stats.pending} color="#d32f2f" />
+        </Grid>
+        <Grid size={{ xs: 6, md: 3 }}>
+            <StatCard title="Processing" count={stats.active} color="#ed6c02" />
+        </Grid>
+        <Grid size={{ xs: 6, md: 3 }}>
+            <StatCard title="Completed" count={stats.resolved} color="#2e7d32" />
+        </Grid>
+      </Grid>
 
-      {/* TICKET GRID */}
-      <Grid container spacing={3} alignItems="stretch">
-        {displayedTickets.map((ticket) => (
-            <Grid item xs={12} md={6} lg={4} key={ticket.id} sx={{ display: 'flex' }}>
-               <Paper 
-                   onClick={() => setSelectedTicket(ticket)}
-                   sx={{ 
-                       p: 2, width: '100%', cursor: 'pointer', transition: '0.2s', '&:hover': { boxShadow: 6 },
-                       borderLeft: `6px solid ${ticket.status === 'PENDING' ? '#d32f2f' : ticket.status === 'IN_PROGRESS' ? '#ed6c02' : '#2e7d32'}` 
-                   }}
-               >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="h6" color="primary">#{ticket.id}</Typography>
-                    <IconButton size="small" onClick={(e) => downloadJobCard(e, ticket)}><PrintIcon fontSize="small" /></IconButton>
-                </Box>
-                <Typography variant="caption" color="text.secondary">{ticket.status}</Typography>
-                <Typography sx={{ mt: 1, mb: 2 }}>{ticket.description}</Typography>
-                
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
-                  <Chip label={ticket.priority} size="small" color={ticket.priority === 'HIGH' ? 'error' : 'default'} />
-                </Box>
-              </Paper>
+      {/* RECENT TICKETS SECTION */}
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h6" fontWeight="bold" display="flex" alignItems="center" gap={1}>
+            <HistoryIcon /> Recent Activity
+        </Typography>
+      </Box>
+
+      <Grid container spacing={3}>
+        {tickets.map((ticket) => (
+            <Grid size={{ xs: 12, md: 6, lg: 4 }} key={ticket.id}>
+                <Card 
+                    elevation={0}
+                    sx={{ 
+                        border: '1px solid #e0e0e0', 
+                        borderRadius: 3, 
+                        transition: '0.2s',
+                        cursor: 'pointer',
+                        '&:hover': { transform: 'translateY(-3px)', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }
+                    }}
+                    onClick={() => setSelectedTicket(ticket)}
+                >
+                    <CardContent>
+                        <Box display="flex" justifyContent="space-between" mb={2}>
+                             <Chip label={ticket.ticketNumber} size="small" variant="outlined" sx={{ fontWeight: 'bold' }} />
+                             <Chip label={ticket.status.replace('_', ' ')} color={getStatusColor(ticket.status)} size="small" sx={{ fontWeight: 'bold' }} />
+                        </Box>
+                        <Typography variant="body1" fontWeight="600" gutterBottom noWrap>
+                            {typeof ticket.errorType === 'string' ? ticket.errorType : "Issue Reported"}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" sx={{ mb: 2, display: '-webkit-box', overflow: 'hidden', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2 }}>
+                            {ticket.description}
+                        </Typography>
+                        <Divider sx={{ my: 1.5 }} />
+                        <Typography variant="caption" color="textSecondary">
+                            {new Date(ticket.createdAt).toLocaleString()}
+                        </Typography>
+                    </CardContent>
+                </Card>
             </Grid>
         ))}
       </Grid>
 
-      {/* CREATE TICKET MODAL */}
-      <Dialog open={openCreate} onClose={() => setOpenCreate(false)} fullWidth maxWidth="sm">
-        <DialogTitle>Raise New Ticket</DialogTitle>
-        <DialogContent>
-            <TextField select fullWidth label="Branch" margin="normal" value={newTicket.branchName} onChange={(e) => setNewTicket({...newTicket, branchName: e.target.value})}>
-                {settings.branches.map((b) => <MenuItem key={b} value={b}>{b}</MenuItem>)}
-            </TextField>
-
-            <TextField select fullWidth label="Category" margin="normal" value={newTicket.errorCategory} onChange={(e) => setNewTicket({...newTicket, errorCategory: e.target.value})}>
-                {settings.errorCategories.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-            </TextField>
-
-            <TextField fullWidth label="Description" multiline rows={3} margin="normal" value={newTicket.description} onChange={(e) => setNewTicket({...newTicket, description: e.target.value})} />
-        </DialogContent>
-        <DialogActions>
-            <Button onClick={() => setOpenCreate(false)}>Cancel</Button>
-            <Button onClick={handleSubmit} variant="contained">Submit</Button>
-        </DialogActions>
-      </Dialog>
-      
+      {/* DIALOG POPUP */}
+      {selectedTicket && (
+        <Dialog open={Boolean(selectedTicket)} onClose={() => setSelectedTicket(null)} fullWidth maxWidth="sm">
+            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant="h6" fontWeight="bold">{selectedTicket.ticketNumber}</Typography>
+                <IconButton onClick={() => setSelectedTicket(null)}><CloseIcon /></IconButton>
+            </DialogTitle>
+            <DialogContent>
+                <Box mb={2}>
+                    <Typography variant="caption" color="textSecondary">STATUS</Typography>
+                    <br />
+                    <Chip label={selectedTicket.status} color={getStatusColor(selectedTicket.status)} sx={{ mt: 0.5 }} />
+                </Box>
+                <Box mb={2}>
+                    <Typography variant="caption" color="textSecondary">DESCRIPTION</Typography>
+                    <Paper variant="outlined" sx={{ p: 2, mt: 0.5, bgcolor: '#fafafa' }}>
+                        {selectedTicket.description}
+                    </Paper>
+                </Box>
+                {selectedTicket.assignedTo && (
+                    <Box>
+                        <Typography variant="caption" color="textSecondary">HANDLED BY</Typography>
+                        <Typography variant="body1" fontWeight="bold">{selectedTicket.assignedTo.username}</Typography>
+                    </Box>
+                )}
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => setSelectedTicket(null)}>Close</Button>
+            </DialogActions>
+        </Dialog>
+      )}
     </Container>
   );
 }

@@ -9,8 +9,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Map URL "/uploads/**" to physical path "C:/NTMI_Data/Uploads/"
+        // Map http://localhost:8080/uploads/filename.jpg -> to project_root/uploads/filename.jpg
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:C:/NTMI_Data/Uploads/");
+                .addResourceLocations("file:uploads/");
     }
 }

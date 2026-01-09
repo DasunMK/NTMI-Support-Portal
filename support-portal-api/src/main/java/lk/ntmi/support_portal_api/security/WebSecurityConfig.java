@@ -76,6 +76,7 @@ public class WebSecurityConfig {
                     .requestMatchers("/api/v1/settings/**").permitAll()
                     .requestMatchers("/uploads/**").permitAll()
                     .requestMatchers("/error").permitAll()
+                    .requestMatchers("/api/v1/notifications/**").authenticated()
                     .anyRequest().authenticated()
             );
 

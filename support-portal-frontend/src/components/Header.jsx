@@ -1,64 +1,63 @@
-import { AppBar, Toolbar, Typography, IconButton, Badge, Box, Avatar, Menu, MenuItem } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Box, CssBaseline, Drawer, Toolbar, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Badge } from '@mui/material';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import TicketService from '../services/ticket.service';
 import AuthService from '../services/auth.service';
-import { useNavigate } from 'react-router-dom';
+import Header from './Header'; 
 
-export default function Header({ onMenuClick, notifications = [] }) {
-  const [anchorEl, setAnchorEl] = useState(null);
+// Import Icons... (Keep your existing imports)
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import SettingsIcon from '@mui/icons-material/Settings'; 
+import GroupIcon from '@mui/icons-material/Group';
+import MailIcon from '@mui/icons-material/Mail'; 
+import HistoryIcon from '@mui/icons-material/History'; 
+import AssessmentIcon from '@mui/icons-material/Assessment';
+
+const drawerWidth = 240;
+
+export default function Layout() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]); 
   const navigate = useNavigate();
-  const user = AuthService.getCurrentUser();
+  const location = useLocation(); 
+  const user = AuthService.getCurrentUser(); 
 
-  const handleMenu = (event) => setAnchorEl(event.currentTarget);
-  const handleClose = () => setAnchorEl(null);
+  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
-  const handleLogout = () => {
-    AuthService.logout();
-    navigate("/login");
-  };
+  useEffect(() => {
+    if (!user) return;
+    const fetchNotifications = async () => {
+      try {
+        const res = await TicketService.getNotifications(user.username);
+        setNotifications(res.data);
+      } catch (error) { console.error("Poll error", error); }
+    };
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 5000);
+    return () => clearInterval(interval);
+  }, [user.username]);
+
+  // ... (Keep your existing drawerContent / renderNavItem logic) ...
+  // Make sure you define 'renderNavItem' and 'drawerContent' here just like before.
 
   return (
-    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-      <Toolbar>
-        <IconButton color="inherit" edge="start" onClick={onMenuClick} sx={{ mr: 2, display: { sm: 'none' } }}>
-          <MenuIcon />
-        </IconButton>
-        
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          NTMI Support Portal
-        </Typography>
-
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {/* Notification Icon */}
-          <IconButton size="large" color="inherit" sx={{ mr: 2 }}>
-            <Badge badgeContent={notifications.length} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-
-          {/* User Profile */}
-          <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={handleMenu}>
-            <Typography variant="body2" sx={{ mr: 1, display: { xs: 'none', sm: 'block' } }}>
-              {user?.username}
-            </Typography>
-            <Avatar sx={{ bgcolor: 'secondary.main', width: 32, height: 32 }}>
-                <AccountCircle />
-            </Avatar>
-          </Box>
-
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          >
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
-          </Menu>
-        </Box>
-      </Toolbar>
-    </AppBar>
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <Header onMenuClick={handleDrawerToggle} notifications={notifications} setNotifications={setNotifications} />
+      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+        <Drawer variant="temporary" open={mobileOpen} onClose={handleDrawerToggle} 
+            sx={{ display: { xs: 'block', sm: 'none' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth } }}>
+          {/* Render drawerContent here */}
+        </Drawer>
+        <Drawer variant="permanent" open 
+            sx={{ display: { xs: 'none', sm: 'block' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth } }}>
+          {/* Render drawerContent here */}
+        </Drawer>
+      </Box>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` }, mt: 8 }}>
+        <Outlet />
+      </Box>
+    </Box>
   );
 }

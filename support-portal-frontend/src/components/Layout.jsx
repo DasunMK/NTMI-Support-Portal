@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Box, CssBaseline, Drawer, Toolbar, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Badge 
 } from '@mui/material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import TicketService from '../services/ticket.service';
+import TicketService from '../services/ticket.service'; // Ensure getNotifications is in here
 import AuthService from '../services/auth.service';
 
 // Icons
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import SettingsIcon from '@mui/icons-material/Settings'; // <--- IMPORTED
+import SettingsIcon from '@mui/icons-material/Settings'; 
 import GroupIcon from '@mui/icons-material/Group';
 import MailIcon from '@mui/icons-material/Mail'; 
 import HistoryIcon from '@mui/icons-material/History'; 
@@ -21,15 +21,8 @@ const drawerWidth = 240;
 
 export default function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  
-  // NOTIFICATION STATE 
   const [notifications, setNotifications] = useState([]); 
-  const [ticketCount, setTicketCount] = useState(0); 
   
-  const prevTicketStatuses = useRef({}); 
-  const prevPendingIds = useRef([]);     
-  const isFirstLoad = useRef(true);      
-
   const navigate = useNavigate();
   const location = useLocation(); 
   const user = AuthService.getCurrentUser(); 
@@ -38,70 +31,27 @@ export default function Layout() {
     setMobileOpen(!mobileOpen);
   };
 
+  // --- UPDATED: Poll Real Backend Notification API ---
   useEffect(() => {
     if (!user) return;
 
-    const checkTickets = async () => {
+    const fetchNotifications = async () => {
       try {
-        const res = await TicketService.getAllTickets(); 
-        const allTickets = res.data;
-        const isAdmin = user.roles.includes("ROLE_ADMIN"); 
-
-        if (isAdmin) {
-             const pendingTickets = allTickets.filter(ticket => ticket.status === 'PENDING');
-             const currentCount = pendingTickets.length;
-
-             if (!isFirstLoad.current) {
-                 pendingTickets.forEach(t => {
-                     if (!prevPendingIds.current.includes(t.id)) {
-                         const newMsg = {
-                             id: Date.now() + Math.random(),
-                             title: "New Ticket Received",
-                             detail: `Branch: ${t.branchName} | Issue: ${t.description}`,
-                             time: new Date(),
-                             type: 'warning',
-                             read: false 
-                         };
-                         setNotifications(prev => [newMsg, ...prev]);
-                     }
-                 });
-             }
-             prevPendingIds.current = pendingTickets.map(t => t.id);
-             setTicketCount(currentCount);
-        }
-
-        if (!isAdmin) { // Branch User
-            // Simplified filter logic
-            const myTickets = allTickets.filter(t => t.branchName === user.username); 
-            setTicketCount(myTickets.filter(t => t.status === 'IN_PROGRESS').length);
-
-            myTickets.forEach(t => {
-                const oldStatus = prevTicketStatuses.current[t.id];
-                const newStatus = t.status;
-
-                if (!isFirstLoad.current && oldStatus && oldStatus !== newStatus) {
-                    if (oldStatus === 'PENDING' && newStatus === 'IN_PROGRESS') {
-                        setNotifications(prev => [{ title: `Ticket #${t.id} Started`, type: 'info' }, ...prev]);
-                    }
-                    if (newStatus === 'COMPLETED') {
-                        setNotifications(prev => [{ title: `Ticket #${t.id} Fixed`, type: 'success' }, ...prev]);
-                    }
-                }
-                prevTicketStatuses.current[t.id] = newStatus;
-            });
-        }
-        isFirstLoad.current = false; 
-
+        console.log(`Polling notifications for: ${user.username}`); // <--- DEBUG LOG 1
+        const res = await TicketService.getNotifications(user.username);
+        
+        console.log("Notification Data Received:", res.data); // <--- DEBUG LOG 2
+        setNotifications(res.data);
+      
       } catch (error) {
-        console.error("Polling failed", error);
+        console.error("Notification polling error:", error);
       }
     };
 
-    checkTickets();
-    const interval = setInterval(checkTickets, 5000); 
-    
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [user.username]);
 
   const isActive = (path) => location.pathname === path;
 
@@ -145,10 +95,13 @@ export default function Layout() {
         {isAdmin ? (
           <>
             {renderNavItem("Dashboard", <DashboardIcon />, '/admin-dashboard')}
-            {renderNavItem("Inbox (New)", <MailIcon />, '/inbox', ticketCount)}
+            {renderNavItem("My Work History", <HistoryIcon />, '/admin/my-work')}
+            
+            {/* Show Notification Count on Inbox */}
+            {renderNavItem("Inbox (New)", <MailIcon />, '/inbox', notifications.length)}
+            
             {renderNavItem("Reports", <AssessmentIcon />, '/reports')}
             {renderNavItem("Users", <GroupIcon />, '/users')}
-            {/* ADDED: Admin Settings Link */}
             {renderNavItem("Admin Settings", <SettingsIcon />, '/admin/settings')} 
           </>
         ) : (
@@ -165,7 +118,12 @@ export default function Layout() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <Header onMenuClick={handleDrawerToggle} notifications={notifications} />
+      {/* Pass the real notifications to the Header */}
+      <Header 
+        onMenuClick={handleDrawerToggle} 
+        notifications={notifications} 
+        setNotifications={setNotifications}
+      />
       
       <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
         <Drawer 
