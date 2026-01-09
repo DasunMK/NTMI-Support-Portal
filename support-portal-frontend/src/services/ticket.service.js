@@ -1,33 +1,57 @@
-import api from "../api/axiosConfig"; 
+import axios from 'axios';
+import AuthService from './auth.service';
 
-const TICKET_URL = "/api/v1/tickets"; 
-const NOTIFICATION_URL = "/api/v1/notifications"; 
+const API_URL = 'http://localhost:8080/api/v1/tickets';
+const NOTIFICATION_URL = 'http://localhost:8080/api/v1/notifications'; // New URL
+
+const getAllTickets = () => {
+  return axios.get(API_URL, { headers: AuthService.authHeader() });
+};
+
+const getTicketById = (id) => {
+  return axios.get(API_URL + '/' + id, { headers: AuthService.authHeader() });
+};
 
 const createTicket = (ticketData) => {
-  return api.post(TICKET_URL, ticketData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const headers = AuthService.authHeader();
+  // Allow FormData for images
+  if (!(ticketData instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+  }
+  return axios.post(API_URL, ticketData, { headers });
 };
 
-const getAllTickets = () => { return api.get(TICKET_URL); };
-
-const updateTicketStatus = (ticketId, status, adminUsername) => {
-  return api.put(`${TICKET_URL}/${ticketId}/status`, { 
-    status, username: adminUsername 
-  });
+const updateTicketStatus = (id, status, assignedTo) => {
+  return axios.put(
+    `${API_URL}/${id}/status`,
+    null,
+    {
+      params: { status, assignedTo },
+      headers: AuthService.authHeader()
+    }
+  );
 };
 
+// --- ADD THIS MISSING FUNCTION ---
 const getNotifications = (username) => {
-    return api.get(`${NOTIFICATION_URL}/${username}`);
+  return axios.get(`${NOTIFICATION_URL}/${username}`, { 
+    headers: AuthService.authHeader() 
+  });
 };
 
-const markAsRead = (id) => {
-    return api.put(`${NOTIFICATION_URL}/${id}/read`);
+const markNotificationRead = (id) => {
+  return axios.put(`${NOTIFICATION_URL}/${id}/read`, {}, { 
+      headers: AuthService.authHeader() 
+  });
 };
 
 const TicketService = {
-  createTicket, getAllTickets, updateTicketStatus,
-  getNotifications, markAsRead
+  getAllTickets,
+  getTicketById,
+  createTicket,
+  updateTicketStatus,
+  getNotifications,     // <--- Ensure this is exported
+  markNotificationRead
 };
 
 export default TicketService;

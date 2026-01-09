@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Box, CssBaseline, Drawer, Toolbar, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Badge 
+  Box, CssBaseline, Drawer, Toolbar, List, ListItem, ListItemButton, 
+  ListItemIcon, ListItemText, Divider, Badge 
 } from '@mui/material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import TicketService from '../services/ticket.service'; // Ensure getNotifications is in here
+import TicketService from '../services/ticket.service'; 
 import AuthService from '../services/auth.service';
+import Header from './Header'; 
 
 // Icons
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -14,8 +16,6 @@ import GroupIcon from '@mui/icons-material/Group';
 import MailIcon from '@mui/icons-material/Mail'; 
 import HistoryIcon from '@mui/icons-material/History'; 
 import AssessmentIcon from '@mui/icons-material/Assessment';
-
-import Header from './Header'; 
 
 const drawerWidth = 240;
 
@@ -31,27 +31,26 @@ export default function Layout() {
     setMobileOpen(!mobileOpen);
   };
 
-  // --- UPDATED: Poll Real Backend Notification API ---
+  // --- NOTIFICATION POLLING ---
   useEffect(() => {
-    if (!user) return;
+    // 1. Safety Check: If no user, stop immediately
+    if (!user || !user.username) return;
 
     const fetchNotifications = async () => {
       try {
-        console.log(`Polling notifications for: ${user.username}`); // <--- DEBUG LOG 1
         const res = await TicketService.getNotifications(user.username);
-        
-        console.log("Notification Data Received:", res.data); // <--- DEBUG LOG 2
         setNotifications(res.data);
-      
       } catch (error) {
-        console.error("Notification polling error:", error);
+        console.error("Poll error", error);
       }
     };
 
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 5000);
     return () => clearInterval(interval);
-  }, [user.username]);
+    
+    // 2. CRITICAL FIX: Use optional chaining (?.) to prevent crash on logout
+  }, [user?.username]);
 
   const isActive = (path) => location.pathname === path;
 
@@ -75,17 +74,17 @@ export default function Layout() {
           )}
         </ListItemIcon>
         <ListItemText 
-          primary={text} 
-          primaryTypographyProps={{ 
-            fontWeight: isActive(path) ? 'bold' : 'normal',
-            color: isActive(path) ? "#1976d2" : "inherit" 
-          }} 
+            primary={text} 
+            primaryTypographyProps={{ 
+                fontWeight: isActive(path) ? 'bold' : 'normal',
+                color: isActive(path) ? "#1976d2" : "inherit" 
+            }}
         />
       </ListItemButton>
     </ListItem>
   );
 
-  const isAdmin = user?.roles.includes("ROLE_ADMIN");
+  const isAdmin = user?.roles?.includes("ROLE_ADMIN");
 
   const drawerContent = (
     <div>
@@ -95,14 +94,11 @@ export default function Layout() {
         {isAdmin ? (
           <>
             {renderNavItem("Dashboard", <DashboardIcon />, '/admin-dashboard')}
-            {renderNavItem("My Work History", <HistoryIcon />, '/admin/my-work')}
-            
-            {/* Show Notification Count on Inbox */}
-            {renderNavItem("Inbox (New)", <MailIcon />, '/inbox', notifications.length)}
-            
+            {renderNavItem("My Work", <HistoryIcon />, '/admin/my-work')}
+            {renderNavItem("Inbox", <MailIcon />, '/inbox', notifications.length)}
             {renderNavItem("Reports", <AssessmentIcon />, '/reports')}
             {renderNavItem("Users", <GroupIcon />, '/users')}
-            {renderNavItem("Admin Settings", <SettingsIcon />, '/admin/settings')} 
+            {renderNavItem("Settings", <SettingsIcon />, '/admin/settings')} 
           </>
         ) : (
           <>
@@ -118,7 +114,8 @@ export default function Layout() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      {/* Pass the real notifications to the Header */}
+      
+      {/* HEADER with Notifications */}
       <Header 
         onMenuClick={handleDrawerToggle} 
         notifications={notifications} 

@@ -23,7 +23,6 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
     
-    // --- ADD THIS ---
     private Integer branchId;
 
     public UserDetailsImpl(Integer id, String username, String email, String password,
@@ -37,30 +36,34 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public static UserDetailsImpl build(User user) {
-        // Handle Role -> Authority
+        // SAFETY CHECK: If role is null in DB, default to "USER"
+        String roleName = (user.getRole() != null) ? user.getRole().name() : "USER";
+        
         List<GrantedAuthority> authorities = Collections.singletonList(
-            new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
+            new SimpleGrantedAuthority("ROLE_" + roleName)
         );
 
-        // Handle Branch ID safely (it might be null for Admin)
         Integer bId = (user.getBranch() != null) ? user.getBranch().getId() : null;
+
+        // --- CRITICAL FIX: TRIM THE PASSWORD ---
+        // SQL Server often adds invisible spaces to passwords. We must remove them.
+        String cleanPassword = (user.getPassword() != null) ? user.getPassword().trim() : null;
+
+        // DEBUG LOG (To prove this code is running)
+        System.out.println(">>> LOGIN ATTEMPT for: " + user.getUsername());
+        System.out.println("    > DB Password (Trimmed): '" + cleanPassword + "'");
 
         return new UserDetailsImpl(
             user.getId(),
             user.getUsername(),
             user.getEmail(),
-            user.getPassword(),
+            cleanPassword, // <--- Using the trimmed password
             authorities,
-            bId // Pass branch ID
+            bId
         );
     }
 
-    // --- ADD GETTER ---
-    public Integer getBranchId() {
-        return branchId;
-    }
-
-    // Standard UserDetails methods
+    public Integer getBranchId() { return branchId; }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() { return authorities; }
     public Integer getId() { return id; }

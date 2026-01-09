@@ -1,17 +1,11 @@
 import axios from "axios";
 
-// This is the Base URL of your Java API
 const API_URL = "http://localhost:8080/api/v1/auth/";
 
-// 1. LOGIN FUNCTION
 const login = (username, password) => {
   return axios
-    .post(API_URL + "signin", {
-      username,
-      password,
-    })
+    .post(API_URL + "signin", { username, password })
     .then((response) => {
-      // If we get a Token, save it to Local Storage (The Browser's Memory)
       if (response.data.token) {
         localStorage.setItem("user", JSON.stringify(response.data));
       }
@@ -19,20 +13,37 @@ const login = (username, password) => {
     });
 };
 
-// 2. LOGOUT FUNCTION
 const logout = () => {
   localStorage.removeItem("user");
 };
 
-// 3. GET CURRENT USER (Check if logged in)
+// --- CRASH PROOF GET USER ---
 const getCurrentUser = () => {
-  return JSON.parse(localStorage.getItem("user"));
+  try {
+      const userStr = localStorage.getItem("user");
+      if (!userStr || userStr === "undefined") return null;
+      return JSON.parse(userStr);
+  } catch (e) {
+      // If data is corrupt, clear it and return null
+      localStorage.removeItem("user");
+      return null;
+  }
+};
+
+const authHeader = () => {
+  const user = getCurrentUser(); // Reuse safe function
+  if (user && user.token) {
+    return { Authorization: 'Bearer ' + user.token };
+  } else {
+    return {};
+  }
 };
 
 const AuthService = {
   login,
   logout,
   getCurrentUser,
+  authHeader,
 };
 
 export default AuthService;
