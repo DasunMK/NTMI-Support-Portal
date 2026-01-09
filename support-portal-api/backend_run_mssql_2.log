@@ -1,0 +1,287 @@
+[INFO] Scanning for projects...
+[INFO]
+[INFO] ---------------------< lk.ntmi:support-portal-api >---------------------
+[INFO] Building support-portal-api 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] >>> spring-boot:4.0.1:run (default-cli) > test-compile @ support-portal-api >>>
+[INFO]
+[INFO] --- resources:3.3.1:resources (default-resources) @ support-portal-api ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO]
+[INFO] --- compiler:3.14.1:compile (default-compile) @ support-portal-api ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO]
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ support-portal-api ---
+[INFO] skip non existing resourceDirectory /app/support-portal-api/src/test/resources
+[INFO]
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ support-portal-api ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO]
+[INFO] <<< spring-boot:4.0.1:run (default-cli) < test-compile @ support-portal-api <<<
+[INFO]
+[INFO]
+[INFO] --- spring-boot:4.0.1:run (default-cli) @ support-portal-api ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.1)
+
+2026-01-09T04:16:13.657Z  INFO 8344 --- [           main] l.n.s.SupportPortalApiApplication        : Starting SupportPortalApiApplication using Java 21.0.8 with PID 8344 (/app/support-portal-api/target/classes started by jules in /app/support-portal-api)
+2026-01-09T04:16:13.662Z  INFO 8344 --- [           main] l.n.s.SupportPortalApiApplication        : No active profile set, falling back to 1 default profile: "default"
+2026-01-09T04:16:14.800Z  INFO 8344 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-09T04:16:14.884Z  INFO 8344 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 73 ms. Found 6 JPA repository interfaces.
+2026-01-09T04:16:15.763Z  INFO 8344 --- [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-01-09T04:16:15.787Z  INFO 8344 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-09T04:16:15.787Z  INFO 8344 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-01-09T04:16:15.852Z  INFO 8344 --- [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 2120 ms
+2026-01-09T04:16:16.290Z  INFO 8344 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-01-09T04:16:16.370Z  INFO 8344 --- [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.0.Final
+2026-01-09T04:16:16.924Z  INFO 8344 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-09T04:16:16.963Z  INFO 8344 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-09T04:16:17.469Z  INFO 8344 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection ConnectionID:1 ClientConnectionId: 40816af1-d674-4a73-9548-60ddff322d91
+2026-01-09T04:16:17.471Z  INFO 8344 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-09T04:16:17.606Z  WARN 8344 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: SQLServerDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-09T04:16:17.634Z  INFO 8344 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:sqlserver://localhost:1433;concatNullYieldsNull=ON;quotedIdentifier=ON;connectRetryInterval=10;connectRetryCount=1;maxResultBuffer=-1;sendTemporalDataTypesAsStringForBulkCopy=true;delayLoadingLobs=true;useFmtOnly=false;vectorTypeSupport=v1;cacheBulkCopyMetadata=false;bulkCopyForBatchInsertAllowEncryptedValueModifications=false;bulkCopyForBatchInsertTableLock=false;bulkCopyForBatchInsertKeepNulls=false;bulkCopyForBatchInsertKeepIdentity=false;bulkCopyForBatchInsertFireTriggers=false;bulkCopyForBatchInsertCheckConstraints=false;bulkCopyForBatchInsertBatchSize=0;useBulkCopyForBatchInsert=false;cancelQueryTimeout=-1;sslProtocol=TLS;calcBigDecimalPrecision=false;useDefaultJaasConfig=false;jaasConfigurationName=SQLJDBCDriver;statementPoolingCacheSize=0;serverPreparedStatementDiscardThreshold=10;enablePrepareOnFirstPreparedStatementCall=false;fips=false;socketTimeout=0;authentication=NotSpecified;authenticationScheme=nativeAuthentication;xopenStates=false;datetimeParameterType=datetime2;sendTimeAsDatetime=true;replication=false;trustStoreType=JKS;trustServerCertificate=true;TransparentNetworkIPResolution=true;iPAddressPreference=IPv4First;serverNameAsACE=false;sendStringParametersAsUnicode=true;selectMethod=direct;responseBuffering=adaptive;queryTimeout=-1;packetSize=8000;multiSubnetFailover=false;loginTimeout=30;lockTimeout=-1;lastUpdateCount=true;useDefaultGSSCredential=false;prepareMethod=prepexec;encrypt=true;disableStatementPooling=true;databaseName=NTMI_Support_DB;columnEncryptionSetting=Disabled;applicationName=Microsoft JDBC Driver for SQL Server;applicationIntent=readwrite;]
+	Database driver: Microsoft JDBC Driver 13.2 for SQL Server
+	Database dialect: SQLServerDialect
+	Database version: 16.0
+	Default catalog/schema: NTMI_Support_DB/dbo
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 128
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-01-09T04:16:19.214Z  INFO 8344 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate:
+    create table branches (
+        id int identity not null,
+        name varchar(255) not null,
+        primary key (id)
+    )
+Hibernate:
+    create table categories (
+        id int identity not null,
+        name varchar(255) not null,
+        primary key (id)
+    )
+Hibernate:
+    create table error_types (
+        id int identity not null,
+        name varchar(255) not null,
+        category_id int not null,
+        primary key (id)
+    )
+Hibernate:
+    create table notifications (
+        id bigint identity not null,
+        branch_name varchar(255),
+        created_at datetime2(7),
+        error_category varchar(255),
+        error_type varchar(255),
+        is_read bit not null,
+        message varchar(255),
+        related_ticket_id bigint,
+        ticket_number varchar(255),
+        trigger_user varchar(255),
+        type varchar(255),
+        user_id int,
+        primary key (id)
+    )
+Hibernate:
+    create table ticket_images (
+        ticket_id bigint not null,
+        image_path varchar(255)
+    )
+Hibernate:
+    create table tickets (
+        id bigint identity not null,
+        branch_id int,
+        created_at datetime2(7),
+        description varchar(1000) not null,
+        error_type_id int,
+        priority varchar(255) check ((priority in ('LOW','MEDIUM','HIGH','CRITICAL'))),
+        status varchar(255) check ((status in ('OPEN','IN_PROGRESS','RESOLVED','CLOSED'))),
+        ticket_number varchar(255) not null,
+        updated_at datetime2(7),
+        assigned_admin_id int,
+        created_by_user_id int not null,
+        primary key (id)
+    )
+Hibernate:
+    create table users (
+        id int identity not null,
+        created_at datetime2(7),
+        email varchar(100),
+        full_name varchar(100),
+        is_active bit,
+        password varchar(255) not null,
+        role varchar(20) check ((role in ('USER','ADMIN','BRANCH_USER'))),
+        updated_at datetime2(7),
+        username varchar(50) not null,
+        branch_id int,
+        primary key (id)
+    )
+Hibernate:
+    alter table branches
+       drop constraint if exists UKhw68nd07qk3jrjfg70qxq9vb7
+Hibernate:
+    alter table branches
+       add constraint UKhw68nd07qk3jrjfg70qxq9vb7 unique (name)
+Hibernate:
+    alter table categories
+       drop constraint if exists UKt8o6pivur7nn124jehx7cygw5
+Hibernate:
+    alter table categories
+       add constraint UKt8o6pivur7nn124jehx7cygw5 unique (name)
+Hibernate:
+    alter table tickets
+       drop constraint if exists UK4ks48wgrew48dpkh0wd1rbe2b
+Hibernate:
+    alter table tickets
+       add constraint UK4ks48wgrew48dpkh0wd1rbe2b unique (ticket_number)
+Hibernate:
+    alter table users
+       drop constraint if exists UKr43af9ap4edm43mmtq01oddj6
+Hibernate:
+    alter table users
+       add constraint UKr43af9ap4edm43mmtq01oddj6 unique (username)
+Hibernate:
+    alter table error_types
+       add constraint FK9ydw3odgoocbj062j9hadrt17
+       foreign key (category_id)
+       references categories
+Hibernate:
+    alter table notifications
+       add constraint FK9y21adhxn0ayjhfocscqox7bh
+       foreign key (user_id)
+       references users
+Hibernate:
+    alter table ticket_images
+       add constraint FKljdxwxk8yrdbnm6v2sjg6ayeh
+       foreign key (ticket_id)
+       references tickets
+Hibernate:
+    alter table tickets
+       add constraint FK4um0g3osslyegxhgywvn2xaxr
+       foreign key (assigned_admin_id)
+       references users
+Hibernate:
+    alter table tickets
+       add constraint FKsyw3dpwxmlgelm9o6uxsnpfpo
+       foreign key (created_by_user_id)
+       references users
+Hibernate:
+    alter table users
+       add constraint FK9o70sp9ku40077y38fk4wieyk
+       foreign key (branch_id)
+       references branches
+2026-01-09T04:16:19.969Z  INFO 8344 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-09T04:16:20.108Z  INFO 8344 --- [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-01-09T04:16:20.540Z  INFO 8344 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userDetailsServiceImpl
+2026-01-09T04:16:21.066Z  WARN 8344 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-09T04:16:22.242Z  INFO 8344 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-01-09T04:16:22.350Z  INFO 8344 --- [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Starting...
+2026-01-09T04:16:22.350Z  INFO 8344 --- [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@252da8f]]
+2026-01-09T04:16:22.351Z  INFO 8344 --- [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Started.
+2026-01-09T04:16:22.372Z  INFO 8344 --- [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-01-09T04:16:22.383Z  INFO 8344 --- [           main] l.n.s.SupportPortalApiApplication        : Started SupportPortalApiApplication in 9.265 seconds (process running for 9.736)
+2026-01-09T04:16:52.085Z  INFO 8344 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-01-09T04:16:52.085Z  INFO 8344 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-01-09T04:16:52.088Z  INFO 8344 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2026-01-09T04:16:52.137Z ERROR 8344 --- [nio-8080-exec-1] l.n.s.security.jwt.AuthEntryPointJwt     : Unauthorized error: Full authentication is required to access this resource
+2026-01-09T04:17:22.310Z  INFO 8344 --- [MessageBroker-1] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 1, active threads = 1, queued tasks = 0, completed tasks = 0]
+Hibernate:
+    select
+        u1_0.id,
+        u1_0.branch_id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.password,
+        u1_0.role,
+        u1_0.updated_at,
+        u1_0.username
+    from
+        users u1_0
+    where
+        u1_0.username=?
+2026-01-09T04:17:37.884Z ERROR 8344 --- [nio-8080-exec-4] l.n.s.security.jwt.AuthEntryPointJwt     : Unauthorized error: Bad credentials
+Hibernate:
+    select
+        top (?) u1_0.id
+    from
+        users u1_0
+    where
+        u1_0.username=?
+Hibernate:
+    select
+        top (?) u1_0.id
+    from
+        users u1_0
+    where
+        u1_0.email=?
+Hibernate:
+    insert
+    into
+        users
+        (branch_id, created_at, email, full_name, is_active, password, role, updated_at, username)
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate:
+    select
+        u1_0.id,
+        u1_0.branch_id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.password,
+        u1_0.role,
+        u1_0.updated_at,
+        u1_0.username
+    from
+        users u1_0
+    where
+        u1_0.username=?
+Hibernate:
+    select
+        u1_0.id,
+        u1_0.branch_id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.password,
+        u1_0.role,
+        u1_0.updated_at,
+        u1_0.username
+    from
+        users u1_0
+    where
+        u1_0.username=?
+Hibernate:
+    select
+        u1_0.id,
+        u1_0.branch_id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.is_active,
+        u1_0.password,
+        u1_0.role,
+        u1_0.updated_at,
+        u1_0.username
+    from
+        users u1_0

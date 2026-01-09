@@ -1,0 +1,44 @@
+[INFO] Scanning for projects...
+[INFO]
+[INFO] ---------------------< lk.ntmi:support-portal-api >---------------------
+[INFO] Building support-portal-api 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- clean:3.5.0:clean (default-clean) @ support-portal-api ---
+[INFO] Deleting /app/support-portal-api/target
+[INFO]
+[INFO] --- resources:3.3.1:resources (default-resources) @ support-portal-api ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO]
+[INFO] --- compiler:3.14.1:compile (default-compile) @ support-portal-api ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 40 source files with javac [debug parameters release 17] to target/classes
+[INFO]
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ support-portal-api ---
+[INFO] skip non existing resourceDirectory /app/support-portal-api/src/test/resources
+[INFO]
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ support-portal-api ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug parameters release 17] to target/test-classes
+[INFO]
+[INFO] --- surefire:3.5.4:test (default-test) @ support-portal-api ---
+[INFO] Tests are skipped.
+[INFO]
+[INFO] --- jar:3.4.2:jar (default-jar) @ support-portal-api ---
+[INFO] Building jar: /app/support-portal-api/target/support-portal-api-0.0.1-SNAPSHOT.jar
+[INFO]
+[INFO] --- spring-boot:4.0.1:repackage (repackage) @ support-portal-api ---
+[INFO] Replacing main artifact /app/support-portal-api/target/support-portal-api-0.0.1-SNAPSHOT.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to /app/support-portal-api/target/support-portal-api-0.0.1-SNAPSHOT.jar.original
+[INFO]
+[INFO] --- install:3.1.4:install (default-install) @ support-portal-api ---
+[INFO] Installing /app/support-portal-api/pom.xml to /home/jules/.m2/repository/lk/ntmi/support-portal-api/0.0.1-SNAPSHOT/support-portal-api-0.0.1-SNAPSHOT.pom
+[INFO] Installing /app/support-portal-api/target/support-portal-api-0.0.1-SNAPSHOT.jar to /home/jules/.m2/repository/lk/ntmi/support-portal-api/0.0.1-SNAPSHOT/support-portal-api-0.0.1-SNAPSHOT.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  12.042 s
+[INFO] Finished at: 2026-01-09T04:13:09Z
+[INFO] ------------------------------------------------------------------------
